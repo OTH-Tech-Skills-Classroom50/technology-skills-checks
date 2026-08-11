@@ -1,0 +1,5 @@
+check50:
+  files:
+    - !exclude "*"
+    - !require phonebook.py
+    - !require phonebook.txt
