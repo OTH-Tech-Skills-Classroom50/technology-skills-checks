@@ -1,5 +1,5 @@
 check50:
   files:
     - !exclude "*"
-    - !require konzertTicketShop.db
     - !require commands.sql
+    - !include konzertTicketShop.db
