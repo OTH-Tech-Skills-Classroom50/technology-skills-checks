@@ -27,7 +27,7 @@ def html_files_exist():
         raise check50.Failure("Missing index.html")
 
 
-@check50.check(html_files_exist)
+@check50.check()
 def html_linking():
     """🔗\tHTML Dateien korrekt untereinander verlinkt."""
     html_files = get_html_files()
@@ -48,7 +48,7 @@ def html_linking():
             raise check50.Failure(f"HTML file {name} does not link to all other HTML files.")
 
 
-@check50.check(html_files_exist)
+@check50.check()
 def html_tag_usage():
     """📄\tMindestens sieben verschiedede HTML-Tags verwendet"""
     all_tags = set()
@@ -61,13 +61,13 @@ def html_tag_usage():
         raise check50.Failure(f"Not enough different HTML tags used (found {len(all_tags)})")
 
 
-@check50.check(html_files_exist)
+@check50.check()
 def css_file_exists():
     """📄\tCSS Datei styles.css existiert"""
     check50.exists(STYLES_CSS)
 
 
-@check50.check(css_file_exists)
+@check50.check()
 def css_file_included():
     """📄\tCSS Datei korrekt eingebunden."""
     css_path = pathlib.Path(STYLES_CSS)
@@ -81,7 +81,7 @@ def css_file_included():
     raise check50.Failure("CSS file not linked in any HTML files.")
 
 
-@check50.check(css_file_exists)
+@check50.check()
 def css_selectors_used():
     """📄\tMindestens 5 verschiedene CSS-Selektoren in styles.css verwendet."""
     css_path = pathlib.Path(STYLES_CSS)
@@ -102,7 +102,7 @@ def css_selectors_used():
         raise check50.Failure(f"Not enough unique CSS selectors (found {len(selectors)})")
 
 
-@check50.check(css_file_exists)
+@check50.check()
 def css_features_used():
     """📄\tMindestens 5 verschiedene CSS-Eigenschaften in styles.css verwendet."""
     css_path = pathlib.Path(STYLES_CSS)
@@ -123,7 +123,7 @@ def css_features_used():
         raise check50.Failure(f"Not enough unique CSS features (found {len(properties)})")
 
 
-@check50.check(html_files_exist)
+@check50.check()
 def bootstrap_included():
     """📦\tBootstrap korrekt eingebunden.."""
     bootstrap_cdn_pattern = re.compile(
@@ -142,7 +142,7 @@ def bootstrap_included():
     raise check50.Failure("Bootstrap not included")
 
 
-@check50.check(bootstrap_included)
+@check50.check()
 def bootstrap_used():
     """📄\tMindestens ein Bootstrap Feature auf der Webseite integriert."""
     bootstrap_classes = ["container", "row", "col", "btn", "navbar", "alert", "card", "modal"]
