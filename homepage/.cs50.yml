@@ -1,0 +1,6 @@
+check50:
+  files:
+    - !exclude "*"
+    - !require index.html
+    - !require styles.css
+    - !include "*.html"
