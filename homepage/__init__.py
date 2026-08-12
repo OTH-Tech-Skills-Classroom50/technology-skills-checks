@@ -31,6 +31,9 @@ def html_files_exist():
 def html_linking():
     """🔗\tHTML Dateien korrekt untereinander verlinkt."""
     html_files = get_html_files()
+    if len(html_files) != HTML_FILES_COUNT:
+        raise check50.Failure(f"Expected {HTML_FILES_COUNT} HTML files, found {len(html_files)}")
+
     html_names = [f.name for f in html_files]
     links = {f.name: set() for f in html_files}
 
