@@ -1,4 +1,9 @@
+# !include, not !require: !require makes check50/lib50 pre-fail with its
+# own generic "You seem to be missing these required files" message before
+# any check in __init__.py runs at all -- which would always win over our
+# own labelled "certificate.pdf existiert" check, and this is the lab's
+# *normal* first-run state (no starter file, unlike every code lab).
 check50:
   files:
     - !exclude "*"
-    - !require certificate.pdf
+    - !include certificate.pdf
