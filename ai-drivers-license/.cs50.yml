@@ -1,0 +1,13 @@
+# !include, not !require: !require makes check50/lib50 pre-fail with its
+# own generic "You seem to be missing these required files" message before
+# any check in __init__.py runs at all -- which would always win over our
+# own labelled "PDF gefunden" check, and this is the lab's *normal*
+# first-run state (no starter file, unlike every code lab).
+#
+# "*.pdf", not a fixed filename: any PDF filename is accepted -- __init__.py's
+# exists() check enforces "exactly one" itself, with a clear message either
+# way (none found / more than one found).
+check50:
+  files:
+    - !exclude "*"
+    - !include "*.pdf"

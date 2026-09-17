@@ -46,13 +46,12 @@ def load(pdf_path):
     extractable text), None otherwise."""
     try:
         reader = pypdf.PdfReader(pdf_path)
-    except Exception as e:  # noqa: BLE001 -- any parse failure means "not a valid PDF"
+        if reader.is_encrypted:
+            return reader, None, "is password-protected, cannot be read"
+        text = "\n".join(page.extract_text() or "" for page in reader.pages)
+    except Exception as e:  # noqa: BLE001 -- any failure here means "not a valid PDF"
         return None, None, f"could not be read as a PDF ({e})"
 
-    if reader.is_encrypted:
-        return reader, None, "is password-protected, cannot be read"
-
-    text = "\n".join(page.extract_text() or "" for page in reader.pages)
     if not text.strip():
         return reader, "", "contains no extractable text (looks like a scanned image, not the real download)"
 
