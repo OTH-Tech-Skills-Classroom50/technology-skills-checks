@@ -37,7 +37,7 @@ def correct_course():
 
 @check50.check(is_valid_pdf)
 def integrity_review():
-    """🔍\tZertifikat-Integrität (informativ -- blockiert die Bewertung nicht)"""
+    """🔍\tZertifikat-Integrität"""
     reader, text, _err = ca.load(CERTIFICATE_FILE)
     info = ca.extract_display_info(text)
     signals = ca.detect_tamper_signals(CERTIFICATE_FILE, reader)
