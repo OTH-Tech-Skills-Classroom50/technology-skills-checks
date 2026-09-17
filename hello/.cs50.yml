@@ -1,4 +1,4 @@
 check50:
   files:
     - !exclude "*"
-    - !require hello.py
+    - !include hello.py
