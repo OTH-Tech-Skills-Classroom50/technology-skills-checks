@@ -1,3 +1,4 @@
+import glob
 import os
 import sys
 
@@ -9,27 +10,39 @@ import check50
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import certificate_analysis as ca
 
-CERTIFICATE_FILE = "certificate.pdf"
+
+def find_pdf():
+    """The single PDF file in the submission's root directory (any
+    filename -- students aren't required to name it a specific way), or
+    None if there isn't exactly one. Non-recursive on purpose: a PDF
+    buried in some unrelated subfolder shouldn't count."""
+    pdfs = sorted(glob.glob("*.pdf"))
+    return pdfs[0] if len(pdfs) == 1 else None
 
 
 @check50.check()
 def exists():
-    """📁\tcertificate.pdf existiert"""
-    check50.exists(CERTIFICATE_FILE)
+    """📁\tPDF gefunden"""
+    pdfs = sorted(glob.glob("*.pdf"))
+    if not pdfs:
+        raise check50.Failure("keine PDF-Datei im Repository gefunden")
+    if len(pdfs) > 1:
+        raise check50.Failure(f"mehrere PDF-Dateien gefunden ({', '.join(pdfs)}) -- bitte nur eine hochladen")
 
 
 @check50.check(exists)
 def is_valid_pdf():
-    """📄\tcertificate.pdf ist eine gültige, lesbare PDF-Datei"""
-    _reader, _text, err = ca.load(CERTIFICATE_FILE)
+    """📄\tPDF ist eine gültige, lesbare Datei"""
+    pdf_path = find_pdf()
+    _reader, _text, err = ca.load(pdf_path)
     if err:
-        raise check50.Failure(f"certificate.pdf {err}")
+        raise check50.Failure(f"{pdf_path} {err}")
 
 
 @check50.check(is_valid_pdf)
 def correct_course():
     """✅\tZertifikat für den richtigen Kurs, vollständig abgeschlossen"""
-    _reader, text, _err = ca.load(CERTIFICATE_FILE)
+    _reader, text, _err = ca.load(find_pdf())
     problems = ca.validate_content(text)
     if problems:
         raise check50.Failure("; ".join(problems))
@@ -38,9 +51,10 @@ def correct_course():
 @check50.check(is_valid_pdf)
 def integrity_review():
     """🔍\tZertifikat-Integrität"""
-    reader, text, _err = ca.load(CERTIFICATE_FILE)
+    pdf_path = find_pdf()
+    reader, text, _err = ca.load(pdf_path)
     info = ca.extract_display_info(text)
-    signals = ca.detect_tamper_signals(CERTIFICATE_FILE, reader)
+    signals = ca.detect_tamper_signals(pdf_path, reader)
 
     check50.log(f"Name auf dem Zertifikat: {info['name']}")
     check50.log(f"Heruntergeladen am: {info['downloaded_on']}")
