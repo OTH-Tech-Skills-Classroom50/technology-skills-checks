@@ -15,6 +15,7 @@ rather than block a student's score on them.
 """
 
 import re
+import unicodedata
 
 import pypdf
 
@@ -131,3 +132,28 @@ def detect_tamper_signals(pdf_path, reader):
         signals.append("PDF has more than one generation (looks like it was opened and re-saved)")
 
     return signals
+
+
+def _normalize_name_token(s):
+    # Same conservative approach as lab-attendance's nameMatching.js: fold
+    # case/whitespace/diacritics (this is real extracted text, not OCR, so
+    # no digit-confusion folding is needed here).
+    s = re.sub(r"\s+", " ", s.strip().lower())
+    return "".join(c for c in unicodedata.normalize("NFKD", s) if not unicodedata.combining(c))
+
+
+def names_plausibly_match(certificate_name, roster_first_name, roster_last_name):
+    """True if both roster name parts appear among the certificate name's
+    tokens (order-independent, so "Nachname Vorname" vs "Vorname Nachname"
+    both work). False if either roster part is missing entirely -- there's
+    nothing meaningful to compare. This is NOT used at grade time (no
+    roster access there, see module docstring) -- it's for the teacher-side
+    review script, which does have real roster data from scores.csv."""
+    if not certificate_name or not roster_first_name or not roster_last_name:
+        return None
+
+    cert_tokens = set(_normalize_name_token(certificate_name).split(" "))
+    return (
+        _normalize_name_token(roster_first_name) in cert_tokens
+        and _normalize_name_token(roster_last_name) in cert_tokens
+    )
